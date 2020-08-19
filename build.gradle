@@ -16,7 +16,7 @@
  */
 import net.fabricmc.loom.LoomGradlePlugin
 
-group 'baritone'
+group 'fabritone'
 version '1.6.2'
 
 buildscript {
@@ -126,7 +126,7 @@ jar {
         attributes(
                 'MixinConfigs': 'mixins.baritone.json',
 
-                'Implementation-Title': 'Baritone',
+                'Implementation-Title': 'Fabritone',
                 'Implementation-Version': version
         )
     }

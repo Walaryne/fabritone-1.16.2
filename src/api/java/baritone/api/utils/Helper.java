@@ -18,6 +18,7 @@
 package baritone.api.utils;
 
 import baritone.api.BaritoneAPI;
+import baritone.api.utils.gui.BaritoneToast;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -51,17 +52,46 @@ public interface Helper {
         // Inner text component
         final Calendar now = Calendar.getInstance();
         final boolean xd = now.get(Calendar.MONTH) == Calendar.APRIL && now.get(Calendar.DAY_OF_MONTH) <= 3;
-        MutableText baritone = new LiteralText(xd ? "Baritoe" : BaritoneAPI.getSettings().shortBaritonePrefix.value ? "B" : "Baritone");
-        baritone.setStyle(baritone.getStyle().withFormatting(Formatting.LIGHT_PURPLE));
+        MutableText baritone = new LiteralText(xd ? "Fabritoe" : BaritoneAPI.getSettings().shortBaritonePrefix.value ? "F" : "Fabritone");
+        baritone.setStyle(baritone.getStyle().withFormatting(Formatting.GREEN));
 
         // Outer brackets
         MutableText prefix = new LiteralText("");
-        prefix.setStyle(baritone.getStyle().withFormatting(Formatting.DARK_PURPLE));
+        prefix.setStyle(baritone.getStyle().withFormatting(Formatting.DARK_GREEN));
         prefix.append("[");
         prefix.append(baritone);
         prefix.append("]");
 
         return prefix;
+    }
+
+    /**
+     * Send a message to display as a toast popup
+     *
+     * @param title The title to display in the popup
+     * @param message The message to display in the popup
+     */
+    default void logToast(Text title, Text message) {
+        BaritoneToast.addOrUpdate(mc.getToastManager(), title, message, BaritoneAPI.getSettings().toastTimer.value);
+    }
+
+    /**
+     * Send a message to display as a toast popup
+     *
+     * @param title The title to display in the popup
+     * @param message The message to display in the popup
+     */
+    default void logToast(String title, String message) {
+        logToast(new LiteralText(title), new LiteralText(message));
+    }
+
+    /**
+     * Send a message to display as a toast popup
+     *
+     * @param message The message to display in the popup
+     */
+    default void logToast(String message) {
+        logToast(Helper.getPrefix(), new LiteralText(message));
     }
 
     /**
@@ -75,20 +105,56 @@ public interface Helper {
             //System.out.println(message);
             return;
         }
-        logDirect(message);
+        // We won't log debug chat into toasts
+        // Because only a madman would want that extreme spam -_-
+        logDirect(message, false);
     }
 
     /**
-     * Send components to chat with the [Baritone] prefix
+     * Send components to chat with the [Fabritone] prefix
+     *
+     * @param logAsToast Whether to log as a toast notification
+     * @param components The components to send
+     */
+    default void logDirect(boolean logAsToast, Text... components) {
+        MutableText component = new LiteralText("");
+        if (!logAsToast) {
+            // If we are not logging as a Toast
+            // Append the Prefix to the base component line
+            component.append(getPrefix());
+            component.append(new LiteralText(" "));
+        }
+        Arrays.asList(components).forEach(component::append);
+        if (logAsToast) {
+            logToast(getPrefix(), component);
+        } else {
+            mc.execute(() -> BaritoneAPI.getSettings().logger.value.accept(component));
+        }
+    }
+
+    /**
+     * Send components to chat with the [Fabritone] prefix
      *
      * @param components The components to send
      */
     default void logDirect(Text... components) {
-        MutableText component = new LiteralText("");
-        component.append(getPrefix());
-        component.append(new LiteralText(" "));
-        Arrays.asList(components).forEach(component::append);
-        mc.execute(() -> BaritoneAPI.getSettings().logger.value.accept(component));
+        logDirect(BaritoneAPI.getSettings().logAsToast.value, components);
+    }
+
+    /**
+     * Send a message to chat regardless of chatDebug (should only be used for critically important messages, or as a
+     * direct response to a chat command)
+     *
+     * @param message The message to display in chat
+     * @param color   The color to print that message in
+     * @param logAsToast Whether to log as a toast notification
+     */
+    default void logDirect(String message, Formatting color, boolean logAsToast) {
+        Stream.of(message.split("\n")).forEach(line -> {
+            MutableText component = new LiteralText(line.replace("\t", "    "));
+            component.setStyle(component.getStyle().withFormatting(color));
+            logDirect(logAsToast, component);
+        });
     }
 
     /**
@@ -99,11 +165,18 @@ public interface Helper {
      * @param color   The color to print that message in
      */
     default void logDirect(String message, Formatting color) {
-        Stream.of(message.split("\n")).forEach(line -> {
-            MutableText component = new LiteralText(line.replace("\t", "    "));
-            component.setStyle(component.getStyle().withFormatting(color));
-            logDirect(component);
-        });
+        logDirect(message, color, BaritoneAPI.getSettings().logAsToast.value);
+    }
+
+    /**
+     * Send a message to chat regardless of chatDebug (should only be used for critically important messages, or as a
+     * direct response to a chat command)
+     *
+     * @param message The message to display in chat
+     * @param logAsToast Whether to log as a toast notification
+     */
+    default void logDirect(String message, boolean logAsToast) {
+        logDirect(message, Formatting.GRAY, logAsToast);
     }
 
     /**
@@ -113,6 +186,6 @@ public interface Helper {
      * @param message The message to display in chat
      */
     default void logDirect(String message) {
-        logDirect(message, Formatting.GRAY);
+        logDirect(message, BaritoneAPI.getSettings().logAsToast.value);
     }
 }

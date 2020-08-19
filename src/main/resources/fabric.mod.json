@@ -1,9 +1,9 @@
 {
     "schemaVersion": 1,
-    "id": "baritone",
+    "id": "fabritone",
     "version": "1.6.2",
-    "name": "Baritone",
-    "description": "Baritone for Fabric",
+    "name": "Fabritone",
+    "description": "Modified Version of Baritone for Fabric",
     "environment": "client",
     "mixins": [
       "mixins.baritone.json"

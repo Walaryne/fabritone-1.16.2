@@ -66,7 +66,7 @@ public class BlockStateInterface {
     public BlockStateInterface(World world, WorldData worldData, boolean copyLoadedChunks) {
         this.world = world;
         this.worldData = worldData;
-        if (copyLoadedChunks) {
+        if (copyLoadedChunks && !world.getChunkManager().getClass().getSimpleName().equals("SodiumChunkManager")) {
             this.provider = ((IClientChunkProvider) world.getChunkManager()).createThreadSafeCopy();
         } else {
             this.provider = (ClientChunkManager) world.getChunkManager();
