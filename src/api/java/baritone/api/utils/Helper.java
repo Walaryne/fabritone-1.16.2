@@ -18,18 +18,18 @@
 package baritone.api.utils;
 
 import baritone.api.BaritoneAPI;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.stream.Stream;
 
 /**
- * An ease-of-access interface to provide the {@link Minecraft} game instance,
+ * An ease-of-access interface to provide the {@link MinecraftClient} game instance,
  * chat and console logging mechanisms, and the Baritone chat prefix.
  *
  * @author Brady
@@ -45,21 +45,21 @@ public interface Helper {
     /**
      * Instance of the game
      */
-    Minecraft mc = Minecraft.getInstance();
+    MinecraftClient mc = MinecraftClient.getInstance();
 
-    static ITextComponent getPrefix() {
+    static Text getPrefix() {
         // Inner text component
         final Calendar now = Calendar.getInstance();
         final boolean xd = now.get(Calendar.MONTH) == Calendar.APRIL && now.get(Calendar.DAY_OF_MONTH) <= 3;
-        TextComponent baritone = new StringTextComponent(xd ? "Baritoe" : BaritoneAPI.getSettings().shortBaritonePrefix.value ? "B" : "Baritone");
-        baritone.setStyle(baritone.getStyle().setFormatting(TextFormatting.LIGHT_PURPLE));
+        MutableText baritone = new LiteralText(xd ? "Baritoe" : BaritoneAPI.getSettings().shortBaritonePrefix.value ? "B" : "Baritone");
+        baritone.setStyle(baritone.getStyle().withFormatting(Formatting.LIGHT_PURPLE));
 
         // Outer brackets
-        TextComponent prefix = new StringTextComponent("");
-        prefix.setStyle(baritone.getStyle().setFormatting(TextFormatting.DARK_PURPLE));
-        prefix.appendString("[");
+        MutableText prefix = new LiteralText("");
+        prefix.setStyle(baritone.getStyle().withFormatting(Formatting.DARK_PURPLE));
+        prefix.append("[");
         prefix.append(baritone);
-        prefix.appendString("]");
+        prefix.append("]");
 
         return prefix;
     }
@@ -83,10 +83,10 @@ public interface Helper {
      *
      * @param components The components to send
      */
-    default void logDirect(ITextComponent... components) {
-        TextComponent component = new StringTextComponent("");
+    default void logDirect(Text... components) {
+        MutableText component = new LiteralText("");
         component.append(getPrefix());
-        component.append(new StringTextComponent(" "));
+        component.append(new LiteralText(" "));
         Arrays.asList(components).forEach(component::append);
         mc.execute(() -> BaritoneAPI.getSettings().logger.value.accept(component));
     }
@@ -98,10 +98,10 @@ public interface Helper {
      * @param message The message to display in chat
      * @param color   The color to print that message in
      */
-    default void logDirect(String message, TextFormatting color) {
+    default void logDirect(String message, Formatting color) {
         Stream.of(message.split("\n")).forEach(line -> {
-            TextComponent component = new StringTextComponent(line.replace("\t", "    "));
-            component.setStyle(component.getStyle().setFormatting(color));
+            MutableText component = new LiteralText(line.replace("\t", "    "));
+            component.setStyle(component.getStyle().withFormatting(color));
             logDirect(component);
         });
     }
@@ -113,6 +113,6 @@ public interface Helper {
      * @param message The message to display in chat
      */
     default void logDirect(String message) {
-        logDirect(message, TextFormatting.GRAY);
+        logDirect(message, Formatting.GRAY);
     }
 }

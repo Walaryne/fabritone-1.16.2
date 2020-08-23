@@ -18,7 +18,7 @@
 package baritone.utils.pathing;
 
 import baritone.api.utils.BetterBlockPos;
-import net.minecraft.util.Direction;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.junit.Test;
 

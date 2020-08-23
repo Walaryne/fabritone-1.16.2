@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Direction;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -234,7 +234,7 @@ public class MovementDiagonal extends Movement {
         } else if (!playerInValidPosition() && !(MovementHelper.isLiquid(ctx, src) && getValidPositions().contains(ctx.playerFeet().up()))) {
             return state.setStatus(MovementStatus.UNREACHABLE);
         }
-        if (dest.y > src.y && ctx.player().getPositionVec().y < src.y + 0.1 && ctx.player().collidedHorizontally) {
+        if (dest.y > src.y && ctx.player().getY() < src.y + 0.1 && ctx.player().horizontalCollision) {
             state.setInput(Input.JUMP, true);
         }
         if (sprint()) {
