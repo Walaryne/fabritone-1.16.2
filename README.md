@@ -29,6 +29,7 @@
 [![WWE integration](https://img.shields.io/badge/WWE%20%22integration%22-master%3F-green.svg)](https://wweclient.com/)
 [![Future integration](https://img.shields.io/badge/Future%20integration-v1.2.12%20%2F%20v1.3.6%20%2F%20v1.4.4-red)](https://futureclient.net/)
 [![RusherHack integration](https://img.shields.io/badge/RusherHack%20integration-v1.2.14-green)](https://rusherhack.org/)
+[![Meteor integration](https://img.shields.io/badge/Meteor%20integration-v0.3.9-red)](https://meteorclient.com/)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](http://forthebadge.com/)
 [![forthebadge](https://forthebadge.com/images/badges/mom-made-pizza-rolls.svg)](http://forthebadge.com/)
 
